@@ -1,5 +1,7 @@
 <?php
 
+use App\Contracts\UrlService;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/{urlKey}', function (string $urlKey) {
+    /** @var UrlService $urlService */
+    $urlService = app(UrlService::class);
+
+    $originalUrl = $urlService->findOriginalUrlByUrlKey($urlKey);
+
+    return redirect($originalUrl);
+})->name('show');

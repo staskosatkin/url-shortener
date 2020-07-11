@@ -1,0 +1,38 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: app.dockerfile
+    volumes:
+      - .:/var/www
+    env_file:
+      - .env
+    working_dir: /var/www
+    depends_on:
+      - db
+  db:
+    image: "mysql:5.7"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=urlshortener
+      - MYSQL_USER=urlshortener
+      - MYSQL_PASSWORD=urlshortener
+    volumes:
+      - data-volume:/var/lib/mysql
+    ports:
+      - 33060:3306
+  web:
+    build:
+      context: .
+      dockerfile: web.dockerfile
+    working_dir: /var/www
+    depends_on:
+      - app
+    volumes:
+      - .:/var/www
+    ports:
+      - 8080:80
+
+volumes:
+  data-volume:

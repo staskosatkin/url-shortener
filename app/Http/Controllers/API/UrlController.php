@@ -2,63 +2,71 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Contracts\UrlService;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\DeleteUrl;
+use App\Http\Requests\ShowUrl;
+use App\Http\Requests\StoreUrl;
+use Illuminate\Http\Response;
 
 class UrlController extends Controller
 {
+    private UrlService $urlService;
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * UrlController constructor.
+     * @param UrlService $urlService
      */
-    public function index()
+    public function __construct(UrlService $urlService)
     {
-        //
+        $this->urlService = $urlService;
+    }
+
+    /**
+     * @param ShowUrl $request
+     * @return Response
+     */
+    public function show(ShowUrl $request): Response
+    {
+        $url = $this->urlService->load(
+            $request->getApiDevKey(),
+            $request->getHash()
+        );
+
+        return new Response($url->toJson(), Response::HTTP_OK, [
+            'Content-Type' => 'application/json'
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreUrl $request
+     * @return Response
      */
-    public function store(Request $request)
+    public function create(StoreUrl $request): Response
     {
-        //
+        $urlModel = $this->urlService->create(
+            $request->getApiDevKey(),
+            $request->getOriginUrl(),
+            $request->getCustomAlias(),
+            $request->getExpireDate()
+        );
+
+        return new Response($urlModel->toJson(), Response::HTTP_CREATED, [
+            'Content-Type' => 'application/json',
+            'location' => route('show', ['urlKey' => $urlModel->hash]),
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function delete(DeleteUrl $request): Response
     {
-        //
+        $this->urlService->delete(
+            $request->getApiDevKey(),
+            $request->getHash()
+        );
+
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

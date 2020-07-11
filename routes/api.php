@@ -17,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('auth:api')->post('/urls', 'API\UrlController@create')->name('url.create');
+Route::middleware('auth:api')->get('/urls/{hash}', 'API\UrlController@show')->name('url.get');
+Route::middleware('auth:api')->delete('/urls/{hash}', 'API\UrlController@delete')->name('url.delete');
