@@ -5,23 +5,28 @@ services:
       context: .
       dockerfile: app.dockerfile
     volumes:
-      - .:/var/www
+      - .:/var/www:delegated
     env_file:
       - .env
-    working_dir: /var/www
-    depends_on:
-      - db
-  db:
-    image: "mysql:5.7"
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=urlshortener
-      - MYSQL_USER=urlshortener
-      - MYSQL_PASSWORD=urlshortener
-    volumes:
-      - data-volume:/var/lib/mysql
+      XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost remote_enable=1 profiler_enable_trigger=1 profiler_output_dir=/var/www/storage/profile"
+      PHP_IDE_CONFIG: "serverName=Docker"
+    working_dir: /var/www
+    networks:
+      - platform
+  postgres:
+    container_name: postgres-urlsrotener
+    image: postgres:12.3
     ports:
-      - 33060:3306
+      - 5433:5432
+    volumes:
+      - data-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: urlshortener
+      POSTGRES_PASSWORD: urlshortener
+      POSTGRES_DB: urlshortener
+    networks:
+      - platform
   web:
     build:
       context: .
@@ -30,9 +35,14 @@ services:
     depends_on:
       - app
     volumes:
-      - .:/var/www
+      - .:/var/www:delegated
     ports:
       - 8080:80
+    networks:
+      - platform
 
 volumes:
-  data-volume:
+  data-postgres:
+networks:
+  platform:
+

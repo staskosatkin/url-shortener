@@ -7,6 +7,7 @@ use App\Contracts\TokenService;
 use App\Contracts\UrlService;
 use App\Contracts\UserService;
 use App\Services\HashRandomString;
+use App\Services\KGS;
 use App\Services\Token;
 use App\Services\Url;
 use App\Services\User;

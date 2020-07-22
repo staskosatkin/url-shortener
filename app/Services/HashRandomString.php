@@ -9,8 +9,6 @@ class HashRandomString implements HashGenerationService
 {
     public function createHash(): string
     {
-        $hash = hash('sha256', Str::random(60));
-        $base64 = base64_encode($hash);
-        return Str::substr($base64, 0, 6);
+        return Str::random(6);
     }
 }
