@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class AddUrlModelTable extends Migration
@@ -13,8 +14,11 @@ class AddUrlModelTable extends Migration
      */
     public function up()
     {
-        Schema::create('urls', function (Blueprint $table) {
-            $table->string('hash', 16)->primary();
+        DB::statement("CREATE SCHEMA application");
+
+        Schema::create('application.urls', function (Blueprint $table) {
+            $table->id();
+            $table->string('hash', 6)->index('idx_hash');
             $table->string('original_url', 512);
             $table->dateTime('expiration_date')->nullable();
             $table->string('custom_alias', 10)->nullable();

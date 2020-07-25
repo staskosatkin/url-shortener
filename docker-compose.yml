@@ -3,7 +3,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: app.dockerfile
+      dockerfile: docker/app.dockerfile
     volumes:
       - .:/var/www:delegated
     env_file:
@@ -27,22 +27,19 @@ services:
       POSTGRES_DB: urlshortener
     networks:
       - platform
-  web:
+  redis:
+    container_name: redis-urlsrotener
     build:
       context: .
-      dockerfile: web.dockerfile
-    working_dir: /var/www
-    depends_on:
-      - app
-    volumes:
-      - .:/var/www:delegated
+      dockerfile: docker/redis.dockerfile
     ports:
-      - 8080:80
+      - 6380:6379
     networks:
       - platform
 
 volumes:
   data-postgres:
+    driver: "local"
 networks:
   platform:
 

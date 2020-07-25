@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Url extends Model
 {
-    protected $table = 'urls';
+    protected $table = 'application.urls';
 
     /**
      * @var string
